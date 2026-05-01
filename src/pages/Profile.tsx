@@ -71,6 +71,9 @@ const Profile = () => {
   const [customTitle, setCustomTitle] = useState("");
   const [customTitleColor, setCustomTitleColor] = useState("#ef4444");
   const [usernameCss, setUsernameCss] = useState("");
+  const [flairPrefix, setFlairPrefix] = useState("");
+  const [flairSuffix, setFlairSuffix] = useState("");
+  const [flairIcon, setFlairIcon] = useState("");
   const [loading, setLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [userRole, setUserRole] = useState<string>("newbie");
@@ -158,6 +161,9 @@ const Profile = () => {
       setCustomTitle(profileData.custom_title || "");
       setCustomTitleColor(profileData.custom_title_color || "#ef4444");
       setUsernameCss((profileData as any).username_css || "");
+      setFlairPrefix((profileData as any).flair_emoji_prefix || "");
+      setFlairSuffix((profileData as any).flair_emoji_suffix || "");
+      setFlairIcon((profileData as any).flair_icon || "");
       setIsOwnProfile(currentUserId === profileData.id);
       
       await loadUserData(profileData.id);
