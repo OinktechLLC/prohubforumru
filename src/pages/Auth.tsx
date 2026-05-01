@@ -11,6 +11,7 @@ import { signUpSchema, signInSchema } from "@/lib/authSchemas";
 import { Separator } from "@/components/ui/separator";
 import TwoFactorSetup from "@/components/TwoFactorSetup";
 import TwoFactorVerify from "@/components/TwoFactorVerify";
+import TurnstileWidget from "@/components/TurnstileWidget";
 
 const SLTV_CLIENT_ID = "aa0b8e6fea64873f8355043e6b3a42ff";
 const SLTV_API = "https://sltvid.lovable.app";
