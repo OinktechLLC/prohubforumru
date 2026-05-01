@@ -419,6 +419,7 @@ const Auth = () => {
                     minLength={6}
                   />
                 </div>
+                <TurnstileWidget siteKey={turnstileSiteKey} onVerify={setTurnstileToken} />
                 <Button type="submit" className="w-full" disabled={loading || sltvLoading}>
                   {loading ? "Загрузка..." : "Зарегистрироваться"}
                 </Button>
