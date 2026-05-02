@@ -49,6 +49,7 @@ const UserLink = ({
         profilePath={profilePath}
         onClick={handleClick}
       />
+      <BannedUserInlineBadge userId={userId} username={username} />
     </div>
   );
 };
