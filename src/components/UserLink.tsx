@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import StyledUsername from "@/components/StyledUsername";
+import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
 
 interface UserLinkProps {
   username: string;
