@@ -67,6 +67,14 @@ import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
+const CodeForumGate = () => {
+  const seen = typeof window !== "undefined" && localStorage.getItem("codeforum_visited") === "1";
+  if (!seen && typeof window !== "undefined") {
+    return <Navigate to="/codeforum/welcome" replace />;
+  }
+  return <CodeForumPanel />;
+};
+
 const AppLayout = ({ user }: { user: any }) => {
   const location = useLocation();
   const isCodeForumRoute = location.pathname === "/codeforum" || location.pathname.startsWith("/codeforum/");
