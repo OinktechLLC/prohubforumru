@@ -24,6 +24,8 @@ import ShareButton from "@/components/ShareButton";
 import ReadingProgress from "@/components/ReadingProgress";
 import { use2FAGuard } from "@/hooks/use2FAGuard";
 import BannedUserBadge from "@/components/BannedUserBadge";
+import { useUserRole } from "@/hooks/useUserRole";
+import { PinOff, Unlock, EyeOff } from "lucide-react";
 
 interface Post {
   id: string;
@@ -48,6 +50,16 @@ const TopicView = () => {
   const { toast } = useToast();
   const { trackInterest } = useInterestTracking(user?.id);
   const { check2FA } = use2FAGuard();
+  const { isAdmin, isModerator, canModerateTopics } = useUserRole();
+  const canMod = isAdmin || (isModerator && canModerateTopics);
+
+  const updateTopic = async (patch: Record<string, any>, label: string) => {
+    if (!canMod || !topic?.id) return;
+    const { error } = await supabase.from("topics").update(patch).eq("id", topic.id);
+    if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
+    toast({ title: label });
+    setTopic({ ...topic, ...patch });
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
