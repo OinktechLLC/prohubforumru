@@ -1,5 +1,5 @@
-// ProHub Nexus Service Worker v3.1 - Force Update
-const SW_VERSION = "v3.1";
+// ProHub Nexus Service Worker v3.2 - Force Update
+const SW_VERSION = "v3.2";
 const CACHE_NAME = "prohub-" + SW_VERSION;
 
 // Install - skip waiting to activate immediately  

@@ -54,6 +54,7 @@ import SubForumPanel from "./pages/SubForumPanel";
 import SubForumCategoryView from "./pages/SubForumCategoryView";
 import SubForumTopicView from "./pages/SubForumTopicView";
 import SubForumCreateTopic from "./pages/SubForumCreateTopic";
+import SubForumSearchPage from "./pages/SubForumSearchPage";
 import ChangelogModal from "./components/ChangelogModal";
 import PluginRunner from "./components/PluginRunner";
 import OinkGramBanner from "./components/OinkGramBanner";
@@ -138,6 +139,7 @@ const AppLayout = ({ user }: { user: any }) => {
           <Route path="/f/:slug/c/:catSlug" element={<SubForumCategoryView />} />
           <Route path="/f/:slug/t/:topicId" element={<SubForumTopicView />} />
           <Route path="/f/:slug/new" element={<SubForumCreateTopic />} />
+          <Route path="/f/:slug/search" element={<SubForumSearchPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
