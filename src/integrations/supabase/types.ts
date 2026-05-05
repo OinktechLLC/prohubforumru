@@ -867,6 +867,39 @@ export type Database = {
           },
         ]
       }
+      moderation_audit_log: {
+        Row: {
+          action: string
+          content_id: string
+          content_type: string
+          created_at: string
+          id: string
+          moderator_id: string
+          reason: string | null
+          scope: string
+        }
+        Insert: {
+          action: string
+          content_id: string
+          content_type: string
+          created_at?: string
+          id?: string
+          moderator_id: string
+          reason?: string | null
+          scope: string
+        }
+        Update: {
+          action?: string
+          content_id?: string
+          content_type?: string
+          created_at?: string
+          id?: string
+          moderator_id?: string
+          reason?: string | null
+          scope?: string
+        }
+        Relationships: []
+      }
       moderation_words: {
         Row: {
           created_at: string | null
@@ -988,6 +1021,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string | null
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           likes: number | null
@@ -998,6 +1032,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           likes?: number | null
@@ -1008,6 +1043,7 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           likes?: number | null
@@ -1282,6 +1318,7 @@ export type Database = {
           description: string
           downloads: number | null
           file_url: string | null
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           rating: number | null
@@ -1296,6 +1333,7 @@ export type Database = {
           description: string
           downloads?: number | null
           file_url?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           rating?: number | null
@@ -1310,6 +1348,7 @@ export type Database = {
           description?: string
           downloads?: number | null
           file_url?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           rating?: number | null
@@ -1374,6 +1413,7 @@ export type Database = {
         Row: {
           content: string
           created_at: string
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           topic_id: string
@@ -1383,6 +1423,7 @@ export type Database = {
         Insert: {
           content: string
           created_at?: string
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           topic_id: string
@@ -1392,19 +1433,36 @@ export type Database = {
         Update: {
           content?: string
           created_at?: string
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           topic_id?: string
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sub_forum_posts_topic_id_fkey"
+            columns: ["topic_id"]
+            isOneToOne: false
+            referencedRelation: "sub_forum_topics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sub_forum_posts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sub_forum_topics: {
         Row: {
           category_id: string
           content: string
           created_at: string
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           is_locked: boolean | null
@@ -1419,6 +1477,7 @@ export type Database = {
           category_id: string
           content: string
           created_at?: string
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           is_locked?: boolean | null
@@ -1433,6 +1492,7 @@ export type Database = {
           category_id?: string
           content?: string
           created_at?: string
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           is_locked?: boolean | null
@@ -1443,7 +1503,22 @@ export type Database = {
           user_id?: string
           views?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "sub_forum_topics_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "sub_forum_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sub_forum_topics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       sub_forums: {
         Row: {
@@ -1493,6 +1568,27 @@ export type Database = {
         }
         Relationships: []
       }
+      topic_view_throttle: {
+        Row: {
+          last_at: string
+          scope: string
+          topic_id: string
+          viewer_key: string
+        }
+        Insert: {
+          last_at?: string
+          scope: string
+          topic_id: string
+          viewer_key: string
+        }
+        Update: {
+          last_at?: string
+          scope?: string
+          topic_id?: string
+          viewer_key?: string
+        }
+        Relationships: []
+      }
       topic_watches: {
         Row: {
           created_at: string
@@ -1530,6 +1626,7 @@ export type Database = {
           category_id: string | null
           content: string
           created_at: string | null
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           is_locked: boolean | null
@@ -1543,6 +1640,7 @@ export type Database = {
           category_id?: string | null
           content: string
           created_at?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           is_locked?: boolean | null
@@ -1556,6 +1654,7 @@ export type Database = {
           category_id?: string | null
           content?: string
           created_at?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           is_locked?: boolean | null
@@ -2017,6 +2116,7 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          hidden_reason: string | null
           id: string
           is_hidden: boolean | null
           likes: number | null
@@ -2030,6 +2130,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           description?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           likes?: number | null
@@ -2043,6 +2144,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           description?: string | null
+          hidden_reason?: string | null
           id?: string
           is_hidden?: boolean | null
           likes?: number | null
@@ -2180,8 +2282,30 @@ export type Database = {
         Args: { _action_type: string; _user_id: string }
         Returns: undefined
       }
+      increment_topic_views: {
+        Args: { _scope: string; _topic_id: string; _viewer_key: string }
+        Returns: undefined
+      }
       is_protected_username: { Args: { _user_id: string }; Returns: boolean }
       is_user_banned: { Args: { _user_id: string }; Returns: boolean }
+      moderate_post: {
+        Args: {
+          _action: string
+          _post_id: string
+          _reason?: string
+          _scope: string
+        }
+        Returns: undefined
+      }
+      moderate_topic: {
+        Args: {
+          _action: string
+          _reason?: string
+          _scope: string
+          _topic_id: string
+        }
+        Returns: undefined
+      }
       randomly_assign_editor_role: { Args: never; Returns: undefined }
       rename_inactive_users: { Args: { _days?: number }; Returns: number }
       set_content_hidden: {
