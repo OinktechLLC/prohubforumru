@@ -66,7 +66,7 @@ const SubForumTopicView = () => {
       .order("created_at");
     const list = (p as any) || [];
     if (list.length) {
-      const ids = Array.from(new Set(list.map((x: any) => x.user_id)));
+      const ids: string[] = Array.from(new Set(list.map((x: any) => x.user_id as string)));
       const { data: profs } = await supabase
         .from("profiles")
         .select("id, username, avatar_url, is_verified, username_css")
