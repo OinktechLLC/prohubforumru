@@ -24,6 +24,10 @@ import ShareButton from "@/components/ShareButton";
 import ReadingProgress from "@/components/ReadingProgress";
 import { use2FAGuard } from "@/hooks/use2FAGuard";
 import BannedUserBadge from "@/components/BannedUserBadge";
+import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
+import HiddenContentBanner from "@/components/HiddenContentBanner";
+import SeasonalCountdown from "@/components/SeasonalCountdown";
+import ModerationActionDialog from "@/components/ModerationActionDialog";
 import { useUserRole } from "@/hooks/useUserRole";
 import { PinOff, Unlock, EyeOff } from "lucide-react";
 
@@ -53,12 +57,14 @@ const TopicView = () => {
   const { isAdmin, isModerator, canModerateTopics } = useUserRole();
   const canMod = isAdmin || (isModerator && canModerateTopics);
 
-  const updateTopic = async (patch: Record<string, any>, label: string) => {
+  const [hideOpen, setHideOpen] = useState(false);
+
+  const callModAction = async (action: string, reason?: string) => {
     if (!canMod || !topic?.id) return;
-    const { error } = await supabase.from("topics").update(patch).eq("id", topic.id);
+    const { error } = await supabase.rpc("moderate_topic" as any, { _scope: "prohub", _topic_id: topic.id, _action: action, _reason: reason || null });
     if (error) { toast({ title: "Ошибка", description: error.message, variant: "destructive" }); return; }
-    toast({ title: label });
-    setTopic({ ...topic, ...patch });
+    toast({ title: "Готово" });
+    loadTopicAndPosts();
   };
 
   useEffect(() => {
@@ -92,18 +98,9 @@ const TopicView = () => {
 
   const incrementViews = async () => {
     if (!id) return;
-    const { data: currentTopic } = await supabase
-      .from("topics")
-      .select("views")
-      .eq("id", id)
-      .single();
-
-    if (currentTopic) {
-      await supabase
-        .from("topics")
-        .update({ views: currentTopic.views + 1 })
-        .eq("id", id);
-    }
+    let key = localStorage.getItem("ph_viewer_key");
+    if (!key) { key = crypto.randomUUID(); localStorage.setItem("ph_viewer_key", key); }
+    await supabase.rpc("increment_topic_views" as any, { _scope: "prohub", _topic_id: id, _viewer_key: user?.id || key });
   };
 
   const loadTopicAndPosts = async () => {
@@ -250,6 +247,7 @@ const TopicView = () => {
       <Header user={user} />
 
       <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <SeasonalCountdown />
         <div className="mb-4">
           <Button variant="ghost" onClick={() => navigate(`/category/${topic?.categories?.slug}`)}>
             ← Вернуться в {topic?.categories?.name}
@@ -312,17 +310,18 @@ const TopicView = () => {
                     <TopicWatchButton topicId={topic?.id} userId={user?.id} />
                   </div>
                 </div>
+                {topic?.is_hidden && <HiddenContentBanner reason={topic.hidden_reason} className="mt-3" />}
                 {canMod && (
                   <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t">
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_pinned: !topic.is_pinned }, topic.is_pinned ? "Откреплена" : "Закреплена")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => callModAction(topic.is_pinned ? "unpin" : "pin")}>
                       {topic.is_pinned ? <PinOff className="h-3 w-3 mr-1" /> : <Pin className="h-3 w-3 mr-1" />}
                       {topic.is_pinned ? "Открепить" : "Закрепить"}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_locked: !topic.is_locked }, topic.is_locked ? "Открыта" : "Закрыта")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => callModAction(topic.is_locked ? "unlock" : "lock")}>
                       {topic.is_locked ? <Unlock className="h-3 w-3 mr-1" /> : <Lock className="h-3 w-3 mr-1" />}
                       {topic.is_locked ? "Открыть" : "Закрыть"}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_hidden: !topic.is_hidden }, topic.is_hidden ? "Показана" : "Скрыта")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => topic.is_hidden ? callModAction("show") : setHideOpen(true)}>
                       {topic.is_hidden ? <Eye className="h-3 w-3 mr-1" /> : <EyeOff className="h-3 w-3 mr-1" />}
                       {topic.is_hidden ? "Показать" : "Скрыть"}
                     </Button>
@@ -348,11 +347,9 @@ const TopicView = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2 flex-wrap">
                       <UserLink username={post.profiles?.username} avatarUrl={post.profiles?.avatar_url} />
+                      <BannedUserInlineBadge userId={post.user_id} />
                       <span className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(post.created_at), {
-                          addSuffix: true,
-                          locale: ru,
-                        })}
+                        {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: ru })}
                       </span>
                     </div>
                     <BBCodeRenderer content={post.content} />
@@ -443,6 +440,13 @@ const TopicView = () => {
           </Card>
         )}
       </main>
+      <ModerationActionDialog
+        open={hideOpen}
+        onOpenChange={setHideOpen}
+        title="Скрыть тему"
+        requireReason
+        onConfirm={(reason) => callModAction("hide", reason)}
+      />
     </div>
   );
 };
