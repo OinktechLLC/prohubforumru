@@ -247,6 +247,7 @@ const TopicView = () => {
       <Header user={user} />
 
       <main className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
+        <SeasonalCountdown />
         <div className="mb-4">
           <Button variant="ghost" onClick={() => navigate(`/category/${topic?.categories?.slug}`)}>
             ← Вернуться в {topic?.categories?.name}
@@ -309,17 +310,18 @@ const TopicView = () => {
                     <TopicWatchButton topicId={topic?.id} userId={user?.id} />
                   </div>
                 </div>
+                {topic?.is_hidden && <HiddenContentBanner reason={topic.hidden_reason} className="mt-3" />}
                 {canMod && (
                   <div className="flex flex-wrap gap-1.5 mt-3 pt-3 border-t">
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_pinned: !topic.is_pinned }, topic.is_pinned ? "Откреплена" : "Закреплена")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => callModAction(topic.is_pinned ? "unpin" : "pin")}>
                       {topic.is_pinned ? <PinOff className="h-3 w-3 mr-1" /> : <Pin className="h-3 w-3 mr-1" />}
                       {topic.is_pinned ? "Открепить" : "Закрепить"}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_locked: !topic.is_locked }, topic.is_locked ? "Открыта" : "Закрыта")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => callModAction(topic.is_locked ? "unlock" : "lock")}>
                       {topic.is_locked ? <Unlock className="h-3 w-3 mr-1" /> : <Lock className="h-3 w-3 mr-1" />}
                       {topic.is_locked ? "Открыть" : "Закрыть"}
                     </Button>
-                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => updateTopic({ is_hidden: !topic.is_hidden }, topic.is_hidden ? "Показана" : "Скрыта")}>
+                    <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => topic.is_hidden ? callModAction("show") : setHideOpen(true)}>
                       {topic.is_hidden ? <Eye className="h-3 w-3 mr-1" /> : <EyeOff className="h-3 w-3 mr-1" />}
                       {topic.is_hidden ? "Показать" : "Скрыть"}
                     </Button>
