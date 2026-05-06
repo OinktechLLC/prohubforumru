@@ -82,6 +82,12 @@ const TopicView = () => {
   useEffect(() => {
     loadTopicAndPosts();
     incrementViews();
+    if (!id) return;
+    const ch = supabase.channel(`ph-topic-${id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts", filter: `topic_id=eq.${id}` }, () => loadTopicAndPosts())
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "topics", filter: `id=eq.${id}` }, () => loadTopicAndPosts())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [id]);
 
   useEffect(() => {
