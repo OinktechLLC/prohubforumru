@@ -52,6 +52,12 @@ const CodeForumTopicView = () => {
   useEffect(() => {
     loadData();
     incrementViews();
+    if (!id) return;
+    const ch = supabase.channel(`cf-topic-${id}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "posts", filter: `topic_id=eq.${id}` }, () => loadData())
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "topics", filter: `id=eq.${id}` }, () => loadData())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [id]);
 
   const incrementViews = async () => {
