@@ -247,7 +247,7 @@ const CodeForumTopicView = () => {
               <>
                 <button
                   onClick={async () => {
-                    const { error } = await supabase.from("topics").update({ is_pinned: !topic.is_pinned }).eq("id", topic.id);
+                    const { error } = await supabase.rpc("moderate_topic" as any, { _scope: "codeforum", _topic_id: topic.id, _action: topic.is_pinned ? "unpin" : "pin", _reason: null });
                     if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
                     else { toast({ title: topic.is_pinned ? "Откреплена" : "Закреплена" }); loadData(); }
                   }}
@@ -258,7 +258,7 @@ const CodeForumTopicView = () => {
                 </button>
                 <button
                   onClick={async () => {
-                    const { error } = await supabase.from("topics").update({ is_locked: !topic.is_locked }).eq("id", topic.id);
+                    const { error } = await supabase.rpc("moderate_topic" as any, { _scope: "codeforum", _topic_id: topic.id, _action: topic.is_locked ? "unlock" : "lock", _reason: null });
                     if (error) toast({ title: "Ошибка", description: error.message, variant: "destructive" });
                     else { toast({ title: topic.is_locked ? "Открыта" : "Закрыта" }); loadData(); }
                   }}
