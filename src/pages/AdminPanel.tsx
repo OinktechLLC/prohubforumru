@@ -34,7 +34,9 @@ import {
   Layout,
   FolderOpen,
   Settings,
-  RefreshCw
+  RefreshCw,
+  Pin,
+  Lock as LockIcon
 } from "lucide-react";
 import VerifiedBadge from "@/components/VerifiedBadge";
 import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
@@ -60,6 +62,8 @@ interface ContentItem {
   id: string;
   title: string;
   is_hidden: boolean;
+  is_pinned?: boolean;
+  is_locked?: boolean;
   created_at: string;
   user_id: string;
   profiles?: { username: string };
@@ -146,7 +150,7 @@ const AdminPanel = () => {
       // Load topics
       const { data: topicsData } = await supabase
         .from("topics")
-        .select("id, title, is_hidden, created_at, user_id, profiles(username)")
+        .select("id, title, is_hidden, is_pinned, is_locked, created_at, user_id, profiles(username)")
         .order("created_at", { ascending: false })
         .limit(50);
       setTopics(topicsData || []);
@@ -660,7 +664,9 @@ const AdminPanel = () => {
                           <BannedUserInlineBadge userId={topic.user_id} />
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {topic.is_pinned && <Badge variant="secondary" className="gap-1"><Pin className="h-3 w-3" />Закреп</Badge>}
+                        {topic.is_locked && <Badge variant="secondary" className="gap-1"><LockIcon className="h-3 w-3" />Закрыта</Badge>}
                         <Badge variant={topic.is_hidden ? "destructive" : "default"}>
                           {topic.is_hidden ? "Скрыта" : "Активна"}
                         </Badge>
