@@ -34,11 +34,18 @@ export const useUserRole = () => {
         _user_id: user.id,
       });
 
+      const resolvedRole = error ? 'newbie' : (roleData || 'newbie');
       if (error) {
         console.error('Error loading user role:', error);
         setRole('newbie');
       } else {
-        setRole(roleData || 'newbie');
+        setRole(resolvedRole);
+      }
+
+      if (resolvedRole === 'admin') {
+        setCanModerateResources(true);
+        setCanModerateTopics(true);
+        return;
       }
 
       // Получить права модерации
@@ -52,6 +59,9 @@ export const useUserRole = () => {
       if (moderationRights) {
         setCanModerateResources(moderationRights.can_moderate_resources || false);
         setCanModerateTopics(moderationRights.can_moderate_topics || false);
+      } else {
+        setCanModerateResources(false);
+        setCanModerateTopics(false);
       }
     } catch (error) {
       console.error('Error in loadUserRole:', error);
