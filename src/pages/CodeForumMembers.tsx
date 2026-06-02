@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CodeForumHeader from "@/components/CodeForumHeader";
 import StyledUsername from "@/components/StyledUsername";
+import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
 import AvatarWithBorder from "@/components/AvatarWithBorder";
 import { CF_ROLES } from "@/hooks/useCodeForumRole";
 import { formatDistanceToNow } from "date-fns";
@@ -132,6 +133,7 @@ const CodeForumMembers = () => {
                     profilePath={`/codeforum/profile/${encodeURIComponent(member.username)}`}
                     className="text-sm"
                   />
+                  <BannedUserInlineBadge userId={member.id} />
                 </div>
                 <div className="col-span-3">
                   <span className={`px-2 py-0.5 rounded text-xs text-white ${member.cfRoleColor}`}>
