@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import CodeForumHeader from "@/components/CodeForumHeader";
+import SeasonalCountdown from "@/components/SeasonalCountdown";
 import { MessageSquare, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
@@ -134,6 +135,7 @@ const CodeForumPanel = () => {
       <CodeForumHeader user={user} />
 
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6">
+        <SeasonalCountdown />
         {/* Title bar */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 mb-4 sm:mb-6">
           <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white">
