@@ -15,6 +15,7 @@ interface StyledUsernameProps {
   onClick?: (e: React.MouseEvent) => void;
   profilePath?: string;
   disableMiniProfile?: boolean;
+  flairOverride?: { prefix?: string | null; suffix?: string | null; icon?: string | null; sticker?: string | null };
 }
 
 const StyledUsername = ({ 
@@ -26,6 +27,7 @@ const StyledUsername = ({
   onClick,
   profilePath,
   disableMiniProfile = false,
+  flairOverride,
 }: StyledUsernameProps) => {
   const navigate = useNavigate();
   const uniqueId = useId();
@@ -98,11 +100,11 @@ const StyledUsername = ({
       {parsed.keyframes && (
         <style dangerouslySetInnerHTML={{ __html: parsed.keyframes }} />
       )}
-      <UsernameFlair prefix={flair.prefix} icon={flair.icon} />
+      <UsernameFlair prefix={(flairOverride || flair).prefix} icon={(flairOverride || flair).icon} />
       <span className="font-medium overflow-hidden max-h-6 leading-normal" style={parsed.style}>
         {username}
       </span>
-      <UsernameFlair suffix={flair.suffix} sticker={flair.sticker} />
+      <UsernameFlair suffix={(flairOverride || flair).suffix} sticker={(flairOverride || flair).sticker} />
       {verified && <VerifiedBadge className="h-4 w-4" />}
     </span>
   );

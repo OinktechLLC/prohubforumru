@@ -6,6 +6,7 @@ import { ru } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import CodeForumHeader from "@/components/CodeForumHeader";
 import StyledUsername from "@/components/StyledUsername";
+import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
 import { LikeButton } from "@/components/LikeButton";
 import { StarRating } from "@/components/StarRating";
 
@@ -201,6 +202,7 @@ const CodeForumResourceView = () => {
                 profilePath={`/codeforum/profile/${encodeURIComponent(resource.profiles.username)}`}
               />
             )}
+            <BannedUserInlineBadge userId={resource.user_id} />
             <span>•</span>
             <span>{resource.downloads || 0} загрузок</span>
           </div>
@@ -235,6 +237,7 @@ const CodeForumResourceView = () => {
                           profilePath={`/codeforum/profile/${encodeURIComponent(comment.profiles.username)}`}
                         />
                       )}
+                      <BannedUserInlineBadge userId={comment.user_id} />
                       <span>•</span>
                       <span>{format(new Date(comment.created_at), "d MMM yyyy HH:mm", { locale: ru })}</span>
                     </div>

@@ -11,6 +11,7 @@ import SubForumHeader from "@/components/SubForumHeader";
 import SubForumSearch from "@/components/SubForumSearch";
 import StyledUsername from "@/components/StyledUsername";
 import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
+import SeasonalCountdown from "@/components/SeasonalCountdown";
 import { useToast } from "@/hooks/use-toast";
 
 const SubForumCategoryView = () => {
@@ -62,6 +63,7 @@ const SubForumCategoryView = () => {
     <div className="min-h-screen text-white" style={{ background: forum.bg_color }}>
       <SubForumHeader forum={forum} />
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 max-w-5xl">
+        <SeasonalCountdown />
         <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
           <div className="min-w-0">
             <Link to={`/f/${slug}`} className="text-xs text-white/50 hover:underline">← {forum.name}</Link>
@@ -96,7 +98,7 @@ const SubForumCategoryView = () => {
                   </div>
                   <div className="flex items-center gap-2 mt-1 text-xs text-white/50 flex-wrap">
                     <span className="inline-flex items-center gap-1">
-                      <StyledUsername username={t.profiles?.username || "—"} userId={t.user_id} disableMiniProfile className="text-xs" />
+                      <StyledUsername username={t.profiles?.username || "—"} userId={t.user_id} flairOverride={{}} disableMiniProfile className="text-xs" />
                       <BannedUserInlineBadge userId={t.user_id} />
                     </span>
                     <span>· {formatDistanceToNow(new Date(t.created_at), { locale: ru, addSuffix: true })}</span>

@@ -9,6 +9,7 @@ import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
 import SubForumHeader from "@/components/SubForumHeader";
 import SubForumSearch from "@/components/SubForumSearch";
+import SeasonalCountdown from "@/components/SeasonalCountdown";
 
 interface SubForum {
   id: string; slug: string; name: string; description: string | null;
@@ -65,6 +66,7 @@ const SubForumPanel = () => {
     <div className="min-h-screen text-white" style={{ background: forum.bg_color }}>
       <SubForumHeader forum={forum} />
       <main className="container mx-auto px-2 sm:px-4 py-4 sm:py-6 max-w-5xl">
+        <SeasonalCountdown />
         {forum.description && (
           <div className="mb-4 p-3 sm:p-4 rounded-lg" style={{ background: forum.card_bg }}>
             <p className="text-sm text-white/80">{forum.description}</p>

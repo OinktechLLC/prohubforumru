@@ -7,6 +7,7 @@ import ForumStats from "@/components/ForumStats";
 import BackupDomainsBanner from "@/components/BackupDomainsBanner";
 import TemplateRenderer from "@/components/TemplateRenderer";
 import PluginRunner from "@/components/PluginRunner";
+import SeasonalCountdown from "@/components/SeasonalCountdown";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MessageSquare, Eye, Plus } from "lucide-react";
@@ -128,6 +129,7 @@ const Forum = () => {
       <TemplateRenderer templateType="widget" />
 
       <main className="container mx-auto px-4 py-8">
+        <SeasonalCountdown />
         <div className="mb-6 md:mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl md:text-4xl font-bold mb-1 md:mb-2">ProHub Форум</h1>

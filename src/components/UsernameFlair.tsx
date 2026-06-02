@@ -37,7 +37,7 @@ export const UsernameFlair = ({ prefix, suffix, icon, sticker, size = "sm" }: Fl
       {sticker && (
         <span
           aria-hidden
-          className={`ml-0.5 inline-flex ${stickerBox} items-center justify-center rounded-[4px] bg-white/15 backdrop-blur-sm ring-1 ring-white/20 overflow-hidden align-middle`}
+          className={`username-sticker ml-0.5 inline-flex ${stickerBox} items-center justify-center rounded-[4px] backdrop-blur-sm overflow-hidden align-middle`}
           title="Стикер"
         >
           {isImageUrl ? (

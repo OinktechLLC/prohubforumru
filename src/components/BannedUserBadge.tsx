@@ -39,7 +39,7 @@ const BannedUserBadge = ({ userId, username, className = "" }: BannedUserBadgePr
 
   return (
     <div
-      className={`flex items-start gap-2 rounded-md border-2 border-red-600 bg-red-600 p-3 text-sm text-white shadow-md ${className}`}
+      className={`ban-status-banner flex items-start gap-2 rounded-md p-3 text-sm shadow-md ${className}`}
       role="alert"
     >
       <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white">
