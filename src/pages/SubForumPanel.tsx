@@ -10,6 +10,7 @@ import { ru } from "date-fns/locale";
 import SubForumHeader from "@/components/SubForumHeader";
 import SubForumSearch from "@/components/SubForumSearch";
 import SeasonalCountdown from "@/components/SeasonalCountdown";
+import usePageBackground from "@/hooks/usePageBackground";
 
 interface SubForum {
   id: string; slug: string; name: string; description: string | null;
@@ -26,6 +27,7 @@ const SubForumPanel = () => {
   const [cats, setCats] = useState<Cat[]>([]);
   const [counts, setCounts] = useState<Record<string, { topics: number; latest?: Topic }>>({});
   const [loading, setLoading] = useState(true);
+  usePageBackground(forum?.bg_color);
 
   const loadData = async () => {
     const { data: f } = await supabase.from("sub_forums" as any).select("*").eq("slug", slug).eq("is_active", true).maybeSingle();

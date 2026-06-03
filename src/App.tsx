@@ -63,6 +63,7 @@ import PWAInstallPrompt from "./components/PWAInstallPrompt";
 import SeasonalEffects from "./components/SeasonalEffects";
 import MobileBottomNav from "./components/MobileBottomNav";
 import Footer from "./components/Footer";
+import BackToTopButton from "./components/BackToTopButton";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -146,6 +147,7 @@ const AppLayout = ({ user }: { user: any }) => {
       <PluginRunner hookPoint="global_footer" />
       {!isCodeForumRoute && <Footer />}
       {!isCodeForumRoute && <MobileBottomNav user={user} />}
+      <BackToTopButton />
     </AuthGuard>
   );
 };

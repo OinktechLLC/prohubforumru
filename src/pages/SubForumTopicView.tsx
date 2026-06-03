@@ -16,6 +16,7 @@ import HiddenContentBanner from "@/components/HiddenContentBanner";
 import ModerationActionDialog from "@/components/ModerationActionDialog";
 import BBCodeRenderer from "@/components/BBCodeRenderer";
 import SeasonalCountdown from "@/components/SeasonalCountdown";
+import usePageBackground from "@/hooks/usePageBackground";
 import { useToast } from "@/hooks/use-toast";
 import { useUserRole } from "@/hooks/useUserRole";
 
@@ -40,6 +41,7 @@ const SubForumTopicView = () => {
   const [posting, setPosting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [hideDialog, setHideDialog] = useState<{ kind: "topic" | "post"; id: string } | null>(null);
+  usePageBackground(forum?.bg_color);
 
   const loadTopic = async () => {
     const { data: t } = await supabase
