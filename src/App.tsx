@@ -147,6 +147,7 @@ const AppLayout = ({ user }: { user: any }) => {
       <PluginRunner hookPoint="global_footer" />
       {!isCodeForumRoute && <Footer />}
       {!isCodeForumRoute && <MobileBottomNav user={user} />}
+      <BackToTopButton />
     </AuthGuard>
   );
 };
