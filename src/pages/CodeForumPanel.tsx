@@ -7,6 +7,7 @@ import { MessageSquare, Package } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ru } from "date-fns/locale";
+import usePageBackground from "@/hooks/usePageBackground";
 
 interface Category {
   id: string;
@@ -39,6 +40,7 @@ const CodeForumPanel = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  usePageBackground("#1a1a2e");
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => setUser(session?.user ?? null));

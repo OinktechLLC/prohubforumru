@@ -12,6 +12,7 @@ import SubForumSearch from "@/components/SubForumSearch";
 import StyledUsername from "@/components/StyledUsername";
 import BannedUserInlineBadge from "@/components/BannedUserInlineBadge";
 import SeasonalCountdown from "@/components/SeasonalCountdown";
+import usePageBackground from "@/hooks/usePageBackground";
 import { useToast } from "@/hooks/use-toast";
 
 const SubForumCategoryView = () => {
@@ -22,6 +23,7 @@ const SubForumCategoryView = () => {
   const [cat, setCat] = useState<any>(null);
   const [topics, setTopics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  usePageBackground(forum?.bg_color);
 
   const loadData = async () => {
     const { data: f } = await supabase.from("sub_forums" as any).select("*").eq("slug", slug).maybeSingle();
