@@ -1,27 +1,45 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import { toast } from "sonner";
 
-// Register service worker for PWA with auto-update
+// Register service worker for PWA with manual update prompt
 if ("serviceWorker" in navigator) {
-  let reloadedForVersion = sessionStorage.getItem("ph_sw_reloaded_version");
+  const acknowledgedVersion = sessionStorage.getItem("ph_sw_ack_version");
 
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register(`/sw.js?v=${Date.now()}`, { updateViaCache: "none" }).then((reg) => {
-      reg.update();
-      // Check for updates often so users pick up the latest release quickly
-      setInterval(() => reg.update(), 15 * 1000);
-    }).catch((err) => {
-      console.log("SW registration failed:", err);
-    });
+    navigator.serviceWorker
+      .register(`/sw.js?v=${Date.now()}`, { updateViaCache: "none" })
+      .then((reg) => {
+        reg.update();
+        setInterval(() => reg.update(), 30 * 1000);
+      })
+      .catch((err) => {
+        console.log("SW registration failed:", err);
+      });
   });
 
-  // Listen for SW update messages and reload
+  // Listen for SW update messages -> show toast with "Reload" action
   navigator.serviceWorker.addEventListener("message", (event) => {
-    if (event.data?.type === "SW_UPDATED" && reloadedForVersion !== event.data.version) {
-      sessionStorage.setItem("ph_sw_reloaded_version", event.data.version);
-      reloadedForVersion = event.data.version;
-      window.location.reload();
+    const data = event.data;
+    if (data?.type === "SW_UPDATED" && acknowledgedVersion !== data.version) {
+      toast("🚀 Доступна новая версия ProHub", {
+        description: `Обновление ${data.version} готово. Перезагрузите страницу, чтобы применить.`,
+        duration: 30000,
+        action: {
+          label: "Обновить",
+          onClick: () => {
+            sessionStorage.setItem("ph_sw_ack_version", data.version);
+            window.location.reload();
+          },
+        },
+        cancel: {
+          label: "Позже",
+          onClick: () => {
+            sessionStorage.setItem("ph_sw_ack_version", data.version);
+          },
+        },
+      });
     }
   });
 }
