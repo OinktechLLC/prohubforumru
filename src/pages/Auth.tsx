@@ -313,11 +313,64 @@ const Auth = () => {
     setAuthStep("login");
   };
 
+  const handleResendConfirmation = async () => {
+    if (!pendingEmail) return;
+    setResendingEmail(true);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: "signup",
+        email: pendingEmail,
+        options: { emailRedirectTo: `${window.location.origin}/` },
+      });
+      if (error) throw error;
+      toast({ title: "Письмо отправлено повторно", description: pendingEmail });
+    } catch (e: any) {
+      toast({ title: "Ошибка", description: e.message, variant: "destructive" });
+    } finally {
+      setResendingEmail(false);
+    }
+  };
+
+  // Email-pending screen
+  if (authStep === "email-pending") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Подтвердите email</CardTitle>
+            <CardDescription>Шаг 2 из 3 — после подтверждения email будет настройка 2FA</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <AuthStepper current="email" />
+            <div className="flex items-start gap-3 p-4 rounded-lg bg-muted">
+              <Mail className="h-5 w-5 text-primary mt-0.5" />
+              <div className="text-sm">
+                Мы отправили письмо на <strong>{pendingEmail}</strong>. Перейдите по ссылке из письма, затем вернитесь и войдите.
+              </div>
+            </div>
+            <Button onClick={handleResendConfirmation} disabled={resendingEmail} className="w-full" variant="outline">
+              {resendingEmail ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Mail className="h-4 w-4 mr-2" />}
+              Отправить код повторно
+            </Button>
+            <Button onClick={() => setAuthStep("login")} variant="ghost" className="w-full">
+              Я подтвердил — войти
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+
+
   // Render 2FA setup/verify screens
   if (authStep === "2fa-setup") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <TwoFactorSetup onComplete={handle2FASetupComplete} />
+        <div className="w-full max-w-md space-y-4">
+          <AuthStepper current="2fa" />
+          <TwoFactorSetup onComplete={handle2FASetupComplete} />
+        </div>
       </div>
     );
   }
@@ -325,10 +378,14 @@ const Auth = () => {
   if (authStep === "2fa-verify") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <TwoFactorVerify onSuccess={handle2FAVerifySuccess} onCancel={handle2FACancel} />
+        <div className="w-full max-w-md space-y-4">
+          <AuthStepper current="2fa" />
+          <TwoFactorVerify onSuccess={handle2FAVerifySuccess} onCancel={handle2FACancel} />
+        </div>
       </div>
     );
   }
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
