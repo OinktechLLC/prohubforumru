@@ -395,6 +395,7 @@ const Auth = () => {
           <CardDescription>Форум разработчиков и профессионалов</CardDescription>
         </CardHeader>
         <CardContent>
+          <AuthStepper current="register" />
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="signin">Вход</TabsTrigger>
@@ -426,6 +427,7 @@ const Auth = () => {
                 </div>
                 <TurnstileWidget siteKey={turnstileSiteKey} onVerify={setTurnstileToken} />
                 <Button type="submit" className="w-full" disabled={loading || sltvLoading}>
+                  {loading ? "Загрузка..." : "Войти"}
                 </Button>
 
                 <div className="relative my-4">
