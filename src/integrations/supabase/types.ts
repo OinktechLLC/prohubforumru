@@ -272,11 +272,13 @@ export type Database = {
           description: string | null
           handle: string
           id: string
+          is_active: boolean
           is_verified: boolean
           link_label: string | null
           name: string
           owner_user_id: string
           updated_at: string
+          views: number
           website_url: string | null
         }
         Insert: {
@@ -287,11 +289,13 @@ export type Database = {
           description?: string | null
           handle: string
           id?: string
+          is_active?: boolean
           is_verified?: boolean
           link_label?: string | null
           name: string
           owner_user_id: string
           updated_at?: string
+          views?: number
           website_url?: string | null
         }
         Update: {
@@ -302,12 +306,32 @@ export type Database = {
           description?: string | null
           handle?: string
           id?: string
+          is_active?: boolean
           is_verified?: boolean
           link_label?: string | null
           name?: string
           owner_user_id?: string
           updated_at?: string
+          views?: number
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      brand_profile_view_throttle: {
+        Row: {
+          brand_id: string
+          last_at: string
+          viewer_key: string
+        }
+        Insert: {
+          brand_id: string
+          last_at?: string
+          viewer_key: string
+        }
+        Update: {
+          brand_id?: string
+          last_at?: string
+          viewer_key?: string
         }
         Relationships: []
       }
@@ -2328,6 +2352,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_brand_views: {
+        Args: { _brand_id: string; _viewer_key: string }
+        Returns: undefined
       }
       increment_quest_progress: {
         Args: { _action_type: string; _user_id: string }
