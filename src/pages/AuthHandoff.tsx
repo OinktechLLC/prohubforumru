@@ -38,20 +38,27 @@ const AuthHandoff = () => {
     const rt = params.get("rt");
     if (at && rt) {
       setStatus("applying");
-      supabase.auth
-        .setSession({ access_token: at, refresh_token: rt })
-        .then(({ error }) => {
-          // Always strip tokens from URL
-          history.replaceState(null, "", window.location.pathname);
-          if (error) {
-            setError(error.message);
-            setStatus("error");
-            return;
-          }
-          setStatus("done");
-          toast({ title: "Вход выполнен", description: "Сессия перенесена с другого домена." });
-          setTimeout(() => navigate("/", { replace: true }), 800);
-        });
+      (async () => {
+        // 1) Apply incoming tokens
+        const { error: setErr } = await supabase.auth.setSession({ access_token: at, refresh_token: rt });
+        history.replaceState(null, "", window.location.pathname);
+        if (setErr) {
+          setError(setErr.message);
+          setStatus("error");
+          return;
+        }
+        // 2) Force a refresh on the TARGET domain so it owns a fresh refresh-token
+        //    pair locally. Without this, the source domain's stored refresh token can
+        //    be rotated first, invalidating the one we just applied here (~1h later).
+        const { error: refErr } = await supabase.auth.refreshSession();
+        if (refErr) {
+          // Not fatal — current access token is still valid until it expires.
+          console.warn("refreshSession after handoff failed:", refErr.message);
+        }
+        setStatus("done");
+        toast({ title: "Вход выполнен", description: "Сессия закреплена на этом домене." });
+        setTimeout(() => navigate("/", { replace: true }), 800);
+      })();
     }
   }, [navigate]);
 
@@ -62,6 +69,8 @@ const AuthHandoff = () => {
   }, []);
 
   const generate = async () => {
+    // Refresh BEFORE exporting so the receiving side gets the freshest pair.
+    await supabase.auth.refreshSession().catch(() => {});
     const { data } = await supabase.auth.getSession();
     const s = data.session;
     if (!s) {
@@ -157,8 +166,9 @@ const AuthHandoff = () => {
                 </Button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Ссылка действительна, пока действует твой текущий access_token (около часа).
-                Никому её не показывай — это эквивалент входа в аккаунт.
+                После открытия на целевом домене он сразу обновит refresh-token у себя —
+                сессия будет жить столько же, сколько обычный вход (не «1 час»).
+                Никому не показывай ссылку — это эквивалент входа в аккаунт.
               </p>
             </div>
           )}
